@@ -1,4 +1,10 @@
 // SPDX-License-Identifier: Apache-2.0
+
+// 原来量子引力桥就只是验证了“作为rollup da层”的celestia的数据是否有效
+// 这个事情本来是由celestia的节点来验证的 有了量子引力桥之后这个事情就可以由以太坊来完成
+// 调用量子引力桥之后回返回true或false 来判断数据是正确还是错误的
+
+
 pragma solidity ^0.8.4;
 
 import "./lib/openzeppelin/contracts/utils/cryptography/ECDSA.sol";
@@ -376,12 +382,14 @@ contract QuantumGravityBridge is IDAOracle {
     ) external view override returns (bool) {
         // Tuple must have been committed before.
         if (_tupleRootIndex > state_lastDataRootTupleRootNonce) {
+            // 这里返回错误 因为如果tupleRootIndex大于state_lastDataRootTupleRootNonce 说明tuple没有被commit过 什么意思？
             return false;
         }
 
         // Load the tuple root at the given index from storage.
         bytes32 root = state_dataRootTupleRoots[_tupleRootIndex];
 
+        // 这个应该是最核心的部分 验证proof是否是正确的
         // Verify the proof.
         bool isProofValid = BinaryMerkleTree.verify(root, _proof, abi.encode(_tuple));
 

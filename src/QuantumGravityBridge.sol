@@ -138,6 +138,21 @@ contract QuantumGravityBridge is IDAOracle {
         emit ValidatorSetUpdatedEvent(_nonce, _powerThreshold, _validatorSetHash);
     }
 
+// 这些r. .s .v是什么？
+// v is needed to recover the public key 是在恢复公钥的时候必要的参数
+// 因为你通过一个签名来恢复公钥的时候 可能会返回多个valid public address
+// 关于以太坊签名验证的相关知识：
+// 以太坊中没有地址的概念 一个账户实际上拥有私钥和公钥 地址其实是你公钥进行hash之后的后20个bytes
+
+// FrontierSigner 的SignatureValues 方法中，将签名结果41c4a2eb073e6df89c3f467b3516e9c313590d8d57f7c217fe7e72a7b4a6b8ed5f20a758396a5e681ce1ab4cec749f8560e28c9eb91072ec7a8acc002a11bb1d00
+// 分为三份，分别是：
+// 前32字节的R,41c4a2eb073e6df89c3f467b3516e9c313590d8d57f7c217fe7e72a7b4a6b8ed
+// 中间32字节的S,5f20a758396a5e681ce1ab4cec749f8560e28c9eb91072ec7a8acc002a11bb1d
+// 最后一个字节00加上27，得到V，十进制为27
+// 
+
+
+
     /// @notice Utility function to check if a signature is nil.
     /// If all bytes of the 65-byte signature are zero, then it's a nil signature.
     function isSigNil(Signature calldata _sig) private pure returns (bool) {
